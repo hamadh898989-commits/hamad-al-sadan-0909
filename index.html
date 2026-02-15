@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>لعبة الحروف - The Three shop</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(circle at top, #0b1020, #020617);
+      color: #f9fafb;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    h2 {
+      margin: 4px 0 14px;
+      font-size: 14px;
+      color: #cbd5f5;
+    }
+
+    .game-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto 20px;
+      padding: 10px;
+    }
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .card {
+      background: rgba(15,23,42,0.96);
+      border-radius: 16px;
+      padding: 15px;
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+    .letters-card {
+      flex: 1 1 360px;
+    }
+    .question-card {
+      flex: 1 1 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .letters-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .letters {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .letter-btn {
+      padding: 8px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg,#3b82f6,#2563eb);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .letter-btn:hover:not(:disabled) {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.5);
+    }
+    .letter-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .question-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .current-letter {
+      color: #38bdf8;
+      font-weight: bold;
+    }
+    .question-box {
+      margin: 8px 0 12px;
+      background: #020617;
+      border-radius: 12px;
+      padding: 15px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      border: 1px dashed #4b5563;
+    }
+    .timer {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #facc15;
+    }
+    .question-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .question-actions button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .next-question {
+      background: #22c55e;
+      color: #022c22;
+    }
+    .skip-question {
+      background: #f97316;
+      color: #1f2937;
+    }
+
+    .score-board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .team {
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      min-width: 190px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+    }
+    .team-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .team-1 {
+      border-color: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,0.4);
+    }
+    .team-2 {
+      border-color: #f97316;
+      box-shadow: 0 0 12px rgba(249,115,22,0.4);
+    }
+    .team-color-1 { background: #166534 !important; }
+    .team-color-2 { background: #9a3412 !important; }
+
+    .score-value {
+      font-size: 22px;
+      margin: 4px 0;
+      color: #fbbf24;
+    }
+    .score-btns {
+      margin-top: 6px;
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .score-btns button {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      color: white;
+    }
+    .plus {
+      background: #16a34a;
+    }
+    .minus {
+      background: #b91c1c;
+    }
+    .assign-letter {
+      background: #3b82f6;
+    }
+
+    .controls {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .controls button {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .reset-letters {
+      background: #eab308;
+      color: #1f2937;
+    }
+    .reset-scores {
+      background: #f97316;
+      color: #1f2937;
+    }
+    .reset-all {
+      background: #ef4444;
+      color: #f9fafb;
+    }
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 800px) {
+      .top-row {
+        flex-direction: column;
+      }
+      .letters {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+    @media (max-width: 500px) {
+      .letters {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- غيّر اسم الملف هنا لاسم شعارك الفعلي -->
+    <img src="logo.png" alt="The Three shop logo" class="logo" />
+    <div>
+      <h1>لعبة الحروف - The Three shop</h1>
+      <h2>اضغط حرف → يطلع سؤال عام → اعطِ النقطة للفريق المناسب</h2>
+    </div>
+  </header>
+
+  <div class="game-layout">
+    <div class="top-row">
+      <!-- الحروف -->
+      <div class="card letters-card">
+        <div class="letters-title">الحروف</div>
+        <div class="letters" id="lettersContainer"></div>
+        <div class="hint">بعد نهاية السؤال، يعطى الحرف لفريق ويُلوَّن. تقدر تعيد تفعيل الحروف من الأزرار تحت.</div>
+      </div>
+
+      <!-- السؤال -->
+      <div class="card question-card">
+        <div class="question-header">
+          السؤال الحالي:
+          <span id="currentLetterLabel" class="current-letter">—</span>
+        </div>
+        <div class="question-box" id="questionBox">
+          اضغط على حرف لعرض سؤال…
+        </div>
+        <div class="timer" id="timerLabel">المؤقت: —</div>
+        <div class="question-actions">
+          <button class="next-question" onclick="nextQuestionSameLetter()">سؤال آخر لنفس الحرف</button>
+          <button class="skip-question" onclick="clearQuestion()">مسح السؤال</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- النقاط (فريقين) -->
+    <div class="score-board">
+      <div class="team team-1">
+        <div class="team-name">فريق 1 (أخضر)</div>
+        <div>النقاط:</div>
+        <div class="score-value" id="score1">0</div>
+        <div class="score-btns">
+          <button class="plus" onclick="changeScore(1, 1)">+1</button>
+          <button class="minus" onclick="changeScore(1, -1)">-1</button>
+          <button class="assign-letter" onclick="assignLetterToTeam(1)">الحرف لهذا الفريق</button>
+        </div>
+      </div>
+
+      <div class="team team-2">
+        <div class="team-name">فريق 2 (برتقالي)</div>
+        <div>النقاط:</div>
+        <div class="score-value" id="score2">0</div>
+        <div class="score-btns">
+          <button class="plus" onclick="changeScore(2, 1)">+1</button>
+          <button class="minus" onclick="changeScore(2, -1)">-1</button>
+          <button class="assign-letter" onclick="assignLetterToTeam(2)">الحرف لهذا الفريق</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- أزرار التحكم -->
+    <div class="controls">
+      <button class="reset-letters" onclick="resetLetters()">إعادة تفعيل الحروف</button>
+      <button class="reset-scores" onclick="resetScores()">تصفير النقاط</button>
+      <button class="reset-all" onclick="resetAll()">إعادة تعيين الكل</button>
+    </div>
+  </div>
+
+  <script>
+    // الحروف العربية
+    const letters = [
+      "أ","ب","ت","ث","ج","ح","خ",
+      "د","ذ","ر","ز","س","ش","ص",
+      "ض","ط","ظ","ع","غ","ف","ق",
+      "ك","ل","م","ن","هـ","و","ي"
+    ];
+
+    // ٥ أسئلة عامة لكل حرف
+    const questionsBank = {
+      "أ": [
+        "اذكر دولة عربية يبدأ اسمها بحرف الألف.",
+        "اذكر مدينة سعودية يبدأ اسمها بحرف الألف.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الألف.",
+        "اذكر أكلة معروفة يبدأ اسمها بحرف الألف.",
+        "اذكر مهنة يبدأ اسمها بحرف الألف."
+      ],
+      "ب": [
+        "اذكر دولة عربية يبدأ اسمها بحرف الباء.",
+        "اذكر حيواناً يبدأ بحرف الباء.",
+        "اذكر مدينة سعودية يبدأ اسمها بحرف الباء.",
+        "اذكر نوع فاكهة يبدأ بحرف الباء.",
+        "اذكر مهنة يبدأ اسمها بحرف الباء."
+      ],
+      "ت": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف التاء.",
+        "اذكر مهنة يبدأ اسمها بحرف التاء.",
+        "اذكر أكلة أو طبق يبدأ بحرف التاء.",
+        "اذكر اسم برنامج أو مسلسل يبدأ بحرف التاء.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف التاء."
+      ],
+      "ث": [
+        "اذكر حيواناً يبدأ بحرف الثاء.",
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الثاء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الثاء.",
+        "اذكر شيء في البيت يبدأ بحرف الثاء.",
+        "اذكر اسم شخصية خيالية يبدأ بحرف الثاء."
+      ],
+      "ج": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الجيم.",
+        "اذكر حيواناً يبدأ بحرف الجيم.",
+        "اذكر مهنة يبدأ اسمها بحرف الجيم.",
+        "اذكر أكلة مشهورة يبدأ اسمها بحرف الجيم.",
+        "اذكر اسم فريق أو نادٍ رياضي يبدأ بحرف الجيم."
+      ],
+      "ح": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الحاء.",
+        "اذكر حيواناً يبدأ بحرف الحاء.",
+        "اذكر أكلة أو طبق يبدأ بحرف الحاء.",
+        "اذكر مهنة يبدأ اسمها بحرف الحاء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الحاء."
+      ],
+      "خ": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الخاء.",
+        "اذكر شيئاً في المطبخ يبدأ بحرف الخاء.",
+        "اذكر مهنة يبدأ اسمها بحرف الخاء.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الخاء.",
+        "اذكر حيواناً أو طائراً يبدأ بحرف الخاء."
+      ],
+      "د": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الدال.",
+        "اذكر مهنة يبدأ اسمها بحرف الدال.",
+        "اذكر أكلة أو طبق يبدأ بحرف الدال.",
+        "اذكر اسم لاعب أو شخصية مشهورة يبدأ بحرف الدال.",
+        "اذكر شيء في المدرسة يبدأ بحرف الدال."
+      ],
+      "ذ": [
+        "اذكر حيواناً أو طائراً يبدأ بحرف الذال.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الذال.",
+        "اذكر كلمة تدل على صفة سلبية تبدأ بحرف الذال.",
+        "اذكر شيئاً في الطبيعة يبدأ بحرف الذال.",
+        "اذكر اسم شخصية خيالية يبدأ بحرف الذال."
+      ],
+      "ر": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الراء.",
+        "اذكر نوع فاكهة يبدأ بحرف الراء.",
+        "اذكر نوع حيوان يبدأ بحرف الراء.",
+        "اذكر مهنة يبدأ اسمها بحرف الراء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الراء."
+      ],
+      "ز": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الزاي.",
+        "اذكر نوع فاكهة أو خضار يبدأ بحرف الزاي.",
+        "اذكر حيواناً أو طائراً يبدأ بحرف الزاي.",
+        "اذكر شيء يُستخدم في الزينة يبدأ بحرف الزاي.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الزاي."
+      ],
+      "س": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف السين.",
+        "اذكر نوع حيوان يبدأ بحرف السين.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف السين.",
+        "اذكر مهنة يبدأ اسمها بحرف السين.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف السين."
+      ],
+      "ش": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الشين.",
+        "اذكر نوع مشروب يبدأ بحرف الشين.",
+        "اذكر نوع حيوان أو طائر يبدأ بحرف الشين.",
+        "اذكر مهنة يبدأ اسمها بحرف الشين.",
+        "اذكر اسم مسلسل أو برنامج يبدأ بحرف الشين."
+      ],
+      "ص": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الصاد.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الصاد.",
+        "اذكر نوع حيوان يبدأ بحرف الصاد.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الصاد.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الصاد."
+      ],
+      "ض": [
+        "اذكر كلمة تدل على الضيافة.",
+        "اذكر دولة أو مدينة يحتوي اسمها على حرف الضاد.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الضاد.",
+        "اذكر كلمة تدل على صفة سلبية تبدأ بحرف الضاد.",
+        "اذكر اسم شخصية أو لقب يبدأ بحرف الضاد."
+      ],
+      "ط": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الطاء.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الطاء.",
+        "اذكر مهنة يبدأ اسمها بحرف الطاء.",
+        "اذكر نوع حيوان يبدأ بحرف الطاء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الطاء."
+      ],
+      "ظ": [
+        "اذكر كلمة عكس (ليل) تبدأ بحرف الظاء.",
+        "اذكر كلمة فيها حرف الظاء تدل على الوقت.",
+        "اذكر كلمة تدل على صفة سلبية تبدأ بحرف الظاء.",
+        "اذكر شيئاً في الحياة اليومية يحتوي على حرف الظاء.",
+        "اذكر اسم مكان أو لقب فيه حرف الظاء."
+      ],
+      "ع": [
+        "اذكر دولة عربية يبدأ اسمها بحرف العين.",
+        "اذكر مدينة سعودية يبدأ اسمها بحرف العين.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف العين.",
+        "اذكر نوع حيوان يبدأ بحرف العين.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف العين."
+      ],
+      "غ": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الغين.",
+        "اذكر نوع حيوان يبدأ بحرف الغين.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الغين.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الغين.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الغين."
+      ],
+      "ف": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الفاء.",
+        "اذكر نوع فاكهة يبدأ بحرف الفاء.",
+        "اذكر نوع حيوان يبدأ بحرف الفاء.",
+        "اذكر مهنة يبدأ اسمها بحرف الفاء.",
+        "اذكر اسم فريق أو نادٍ رياضي يبدأ بحرف الفاء."
+      ],
+      "ق": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف القاف.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف القاف.",
+        "اذكر مهنة يبدأ اسمها بحرف القاف.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف القاف.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف القاف."
+      ],
+      "ك": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الكاف.",
+        "اذكر نوع حيوان يبدأ بحرف الكاف.",
+        "اذكر مهنة يبدأ اسمها بحرف الكاف.",
+        "اذكر شيء في البيت يبدأ بحرف الكاف.",
+        "اذكر اسم فريق أو نادٍ رياضي يبدأ بحرف الكاف."
+      ],
+      "ل": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف اللام.",
+        "اذكر نوع حيوان أليف يبدأ بحرف اللام.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف اللام.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف اللام.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف اللام."
+      ],
+      "م": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الميم.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الميم.",
+        "اذكر نوع حيوان يبدأ بحرف الميم.",
+        "اذكر مهنة يبدأ اسمها بحرف الميم.",
+        "اذكر اسم فريق أو نادٍ رياضي يبدأ بحرف الميم."
+      ],
+      "ن": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف النون.",
+        "اذكر اسم نهر يبدأ بحرف النون.",
+        "اذكر نوع حيوان يبدأ بحرف النون.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف النون.",
+        "اذكر أكلة أو طبق يبدأ بحرف النون."
+      ],
+      "هـ": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الهاء.",
+        "اذكر شيئاً في الجسم يبدأ بحرف الهاء.",
+        "اذكر مهنة يبدأ اسمها بحرف الهاء.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الهاء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الهاء."
+      ],
+      "و": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الواو.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الواو.",
+        "اذكر نوع حيوان يبدأ بحرف الواو.",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الواو.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الواو."
+      ],
+      "ي": [
+        "اذكر دولة أو مدينة يبدأ اسمها بحرف الياء (بالعربية).",
+        "اذكر اسم شخصية مشهورة يبدأ بحرف الياء.",
+        "اذكر نوع أكل أو طبق يبدأ بحرف الياء.",
+        "اذكر كلمة تدل على صفة جميلة تبدأ بحرف الياء.",
+        "اذكر نوع حيوان أو طائر يبدأ بحرف الياء."
+      ]
+    };
+
+    const lettersContainer = document.getElementById("lettersContainer");
+    const questionBox = document.getElementById("questionBox");
+    const currentLetterLabel = document.getElementById("currentLetterLabel");
+    const timerLabel = document.getElementById("timerLabel");
+
+    let currentLetter = null;
+    let timerInterval = null;
+    const QUESTION_TIME = 30; // ثواني
+    let currentTime = null;
+
+    // إنشاء أزرار الحروف
+    letters.forEach(letter => {
+      const btn = document.createElement("button");
+      btn.textContent = letter;
+      btn.className = "letter-btn";
+      btn.dataset.letter = letter;
+      lettersContainer.appendChild(btn);
+
+      btn.addEventListener("click", () => {
+        showNewQuestion(letter);
+        btn.disabled = true; // تعطيل الحرف بعد الضغط
+      });
+    });
+
+    function showNewQuestion(letter) {
+      currentLetter = letter;
+      currentLetterLabel.textContent = letter;
+      const list = questionsBank[letter] || [];
+      if (list.length === 0) {
+        questionBox.textContent = "لا توجد أسئلة لهذا الحرف (أضف أسئلة في الكود).";
+        stopTimer();
+        timerLabel.textContent = "المؤقت: —";
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * list.length);
+      const q = list[randomIndex];
+      questionBox.textContent = `حرف (${letter}): ${q}`;
+      startTimer();
+    }
+
+    function nextQuestionSameLetter() {
+      if (!currentLetter) return;
+      showNewQuestion(currentLetter);
+    }
+
+    function clearQuestion() {
+      questionBox.textContent = "اضغط على حرف لعرض سؤال…";
+      currentLetterLabel.textContent = "—";
+      currentLetter = null;
+      stopTimer();
+      timerLabel.textContent = "المؤقت: —";
+    }
+
+    function startTimer() {
+      stopTimer();
+      currentTime = QUESTION_TIME;
+      timerLabel.textContent = `المؤقت: ${currentTime} ثانية`;
+      timerInterval = setInterval(() => {
+        currentTime -= 1;
+        if (currentTime <= 0) {
+          timerLabel.textContent = "انتهى الوقت!";
+          stopTimer();
+        } else {
+          timerLabel.textContent = `المؤقت: ${currentTime} ثانية`;
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // النقاط
+    function changeScore(teamNumber, delta) {
+      const span = document.getElementById("score" + teamNumber);
+      let current = parseInt(span.textContent, 10);
+      current += delta;
+      if (current < 0) current = 0;
+      span.textContent = current;
+    }
+
+    // تلوين الحرف للفريق
+    function assignLetterToTeam(teamNumber) {
+      if (!currentLetter) return;
+      const buttons = document.querySelectorAll(".letter-btn");
+      buttons.forEach(b => {
+        if (b.dataset.letter === currentLetter) {
+          b.classList.remove("team-color-1","team-color-2");
+          b.classList.add("team-color-" + teamNumber);
+        }
+      });
+    }
+
+    // إعادة تفعيل الحروف
+    function resetLetters() {
+      const buttons = document.querySelectorAll(".letter-btn");
+      buttons.forEach(b => {
+        b.disabled = false;
+        b.classList.remove("team-color-1","team-color-2");
+      });
+      clearQuestion();
+    }
+
+    // تصفير النقاط
+    function resetScores() {
+      document.getElementById("score1").textContent = "0";
+      document.getElementById("score2").textContent = "0";
+    }
+
+    function resetAll() {
+      resetLetters();
+      resetScores();
+    }
+  </script>
+</body>
+</html>
